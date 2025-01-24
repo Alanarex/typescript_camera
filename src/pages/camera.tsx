@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 
 interface Photo {
   id: number;
@@ -27,7 +27,7 @@ const CameraComponent = () => {
   const handleCapture = () => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
-    if (videoPlayerRef.current && context) {
+    if (videoPlayerRef.current && context && canvas) {
       context.drawImage(
         videoPlayerRef.current,
         0,
@@ -81,7 +81,8 @@ const CameraComponent = () => {
 
     return () => {
       if (videoPlayerRef.current) {
-        videoPlayerRef.current.srcObject?.getVideoTracks().forEach((track) => {
+        const stream = videoPlayerRef.current.srcObject as MediaStream;
+        stream?.getVideoTracks().forEach((track) => {
           track.stop();
         });
       }
