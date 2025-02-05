@@ -7,9 +7,9 @@ interface Photo {
 
 const CameraComponent = () => {
   const videoPlayerRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [nextId, setNextId] = useState(1);
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
 
   const initializeMedia = async () => {
     try {
@@ -25,16 +25,17 @@ const CameraComponent = () => {
   };
 
   const handleCapture = () => {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
-    if (videoPlayerRef.current && context && canvas) {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    if (videoPlayerRef.current && context) {
+      canvas.width = videoPlayerRef.current.videoWidth;
+      canvas.height = videoPlayerRef.current.videoHeight;
       context.drawImage(
         videoPlayerRef.current,
         0,
         0,
         canvas.width,
-        videoPlayerRef.current.videoHeight /
-          (videoPlayerRef.current.videoWidth / canvas.width)
+        canvas.height
       );
       const imageDataURL = canvas.toDataURL("image/png");
       const newPhoto: Photo = { id: nextId, dataUrl: imageDataURL };
@@ -46,8 +47,6 @@ const CameraComponent = () => {
       localStorage.setItem("photos", JSON.stringify(updatedPhotos));
       localStorage.setItem("nextId", JSON.stringify(nextId + 1));
 
-      canvas.style.display = "block";
-
       // Show notification
       if (Notification.permission === "granted") {
         new Notification("Photo Taken", {
@@ -57,6 +56,18 @@ const CameraComponent = () => {
       }
       console.log("Photo captured and saved");
     }
+  };
+
+  const handleDelete = (id: number) => {
+    const updatedPhotos = photos.filter(photo => photo.id !== id);
+    setPhotos(updatedPhotos);
+    localStorage.setItem("photos", JSON.stringify(updatedPhotos));
+  };
+
+  const handleClearAll = () => {
+    setPhotos([]);
+    localStorage.removeItem("photos");
+    localStorage.removeItem("nextId");
   };
 
   useEffect(() => {
@@ -92,6 +103,7 @@ const CameraComponent = () => {
   return (
     <>
       <button onClick={handleCapture}>Capture</button>
+      <button onClick={handleClearAll} style={{ marginLeft: '10px' }}>Clear All</button>
       <video
         className="!w-full"
         ref={videoPlayerRef}
@@ -99,12 +111,25 @@ const CameraComponent = () => {
         autoPlay
         style={{ display: "block" }}
       />
-      <canvas ref={canvasRef} style={{ display: "none" }} />
-      <div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
         {photos.map((photo) => (
-          <img key={photo.id} src={photo.dataUrl} alt={`Captured ${photo.id}`} />
+          <div key={photo.id} style={{ textAlign: 'center' }}>
+            <img src={photo.dataUrl} alt={`Captured ${photo.id}`} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+            <div>
+              <button onClick={() => setSelectedPhoto(photo)}>Open</button>
+              <button onClick={() => handleDelete(photo.id)} style={{ color: 'red', marginLeft: '5px' }}>🗑️</button>
+            </div>
+          </div>
         ))}
       </div>
+      {selectedPhoto && (
+        <div className="modal">
+          <div className="modal-content">
+            <span className="close" onClick={() => setSelectedPhoto(null)}>&times;</span>
+            <img src={selectedPhoto.dataUrl} alt={`Captured ${selectedPhoto.id}`} style={{ width: '100%' }} />
+          </div>
+        </div>
+      )}
     </>
   );
 };
