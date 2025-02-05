@@ -1,16 +1,19 @@
 import { useRef, useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
+// Interface to define the structure of a Photo object
 interface Photo {
   id: number;
   dataUrl: string;
 }
 
 const CameraComponent = () => {
-  const videoPlayerRef = useRef<HTMLVideoElement>(null);
-  const [photos, setPhotos] = useState<Photo[]>([]);
-  const [nextId, setNextId] = useState(1);
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null);
+  const videoPlayerRef = useRef<HTMLVideoElement>(null); // Reference to the video element
+  const [photos, setPhotos] = useState<Photo[]>([]); // State to store the list of photos
+  const [nextId, setNextId] = useState(1); // State to store the next photo ID
+  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null); // State to store the selected photo for the modal
 
+  // Function to initialize the media stream (camera)
   const initializeMedia = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -21,55 +24,76 @@ const CameraComponent = () => {
       }
     } catch (error) {
       console.error("Error accessing camera:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Camera Permission Denied',
+        text: 'Please allow camera access to take photos.',
+      });
     }
   };
 
-  const handleCapture = () => {
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-    if (videoPlayerRef.current && context) {
-      canvas.width = videoPlayerRef.current.videoWidth;
-      canvas.height = videoPlayerRef.current.videoHeight;
-      context.drawImage(
-        videoPlayerRef.current,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
-      const imageDataURL = canvas.toDataURL("image/png");
-      const newPhoto: Photo = { id: nextId, dataUrl: imageDataURL };
-      const updatedPhotos = [...photos, newPhoto];
-      setPhotos(updatedPhotos);
-      setNextId(nextId + 1);
+  // Function to capture a photo
+  const handleCapture = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      if (videoPlayerRef.current && stream) {
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+        if (context) {
+          canvas.width = videoPlayerRef.current.videoWidth;
+          canvas.height = videoPlayerRef.current.videoHeight;
+          context.drawImage(
+            videoPlayerRef.current,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
+          const imageDataURL = canvas.toDataURL("image/png");
+          const newPhoto: Photo = { id: nextId, dataUrl: imageDataURL };
+          const updatedPhotos = [...photos, newPhoto];
+          setPhotos(updatedPhotos);
+          setNextId(nextId + 1);
 
-      // Save photos to localStorage
-      localStorage.setItem("photos", JSON.stringify(updatedPhotos));
-      localStorage.setItem("nextId", JSON.stringify(nextId + 1));
+          // Save photos to localStorage
+          localStorage.setItem("photos", JSON.stringify(updatedPhotos));
+          localStorage.setItem("nextId", JSON.stringify(nextId + 1));
 
-      // Show notification
-      if (Notification.permission === "granted") {
-        new Notification("Photo Taken", {
-          body: `Photo ID: ${newPhoto.id}`,
-          icon: imageDataURL,
-        });
+          // Show notification
+          if (Notification.permission === "granted") {
+            new Notification("Photo Taken", {
+              body: `Photo ID: ${newPhoto.id}`,
+              icon: imageDataURL,
+            });
+          }
+          console.log("Photo captured and saved");
+        }
       }
-      console.log("Photo captured and saved");
+    } catch (error) {
+      console.error("Error accessing camera:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Camera Permission Denied',
+        text: 'Please allow camera access to take photos.',
+      });
     }
   };
 
+  // Function to delete a photo
   const handleDelete = (id: number) => {
     const updatedPhotos = photos.filter(photo => photo.id !== id);
     setPhotos(updatedPhotos);
     localStorage.setItem("photos", JSON.stringify(updatedPhotos));
   };
 
+  // Function to clear all photos
   const handleClearAll = () => {
     setPhotos([]);
     localStorage.removeItem("photos");
     localStorage.removeItem("nextId");
   };
 
+  // useEffect to initialize the camera and load photos from localStorage
   useEffect(() => {
     initializeMedia();
 
@@ -90,6 +114,7 @@ const CameraComponent = () => {
       console.log("Next ID loaded from localStorage");
     }
 
+    // Cleanup function to stop the camera stream when the component unmounts
     return () => {
       if (videoPlayerRef.current) {
         const stream = videoPlayerRef.current.srcObject as MediaStream;
@@ -102,6 +127,7 @@ const CameraComponent = () => {
 
   return (
     <>
+      <h1>Smile &#128515;</h1>
       <button onClick={handleCapture}>Capture</button>
       <button onClick={handleClearAll} style={{ marginLeft: '10px' }}>Clear All</button>
       <video
