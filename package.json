@@ -15,7 +15,8 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-leaflet": "^4.2.1",
-    "sweetalert2": "^11.15.10"
+    "sweetalert2": "^11.15.10",
+    "workbox-window": "^7.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
@@ -29,6 +30,7 @@
     "globals": "^15.14.0",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",
-    "vite": "^6.0.5"
+    "vite": "^6.1.0",
+    "vite-plugin-pwa": "^0.21.1"
   }
 }
