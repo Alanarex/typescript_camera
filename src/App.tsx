@@ -3,6 +3,7 @@ import Geolocalisation from './pages/geolocalisation';
 import PhoneCall from './pages/phoneCall';
 import Vibrator from './pages/vibrator';
 import BatteryLevel from './pages/battery';
+import OtpValidation from './pages/OtpValidation';
 import './App.css';
 
 function App() {
@@ -22,6 +23,9 @@ function App() {
       </div>
       <div className="card">
         <BatteryLevel />
+      </div>
+      <div className="card">
+        <OtpValidation />
       </div>
     </>
   );
