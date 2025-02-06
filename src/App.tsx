@@ -1,6 +1,7 @@
-import CameraComponent from './pages/camera'
-import Geolocalisation from './pages/geolocalisation'
-import './App.css'
+import CameraComponent from './pages/camera';
+import Geolocalisation from './pages/geolocalisation';
+import PhoneCall from './pages/phoneCall';
+import './App.css';
 
 function App() {
   return (
@@ -11,8 +12,11 @@ function App() {
       <div className="card">
         <Geolocalisation />
       </div>
+      <div className="card">
+        <PhoneCall />
+      </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
