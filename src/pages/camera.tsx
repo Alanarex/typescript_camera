@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { showNotification } from '../utils/notifications'; // Import the showNotification function
 
 // Interface to define the structure of a Photo object
 interface Photo {
@@ -59,13 +60,12 @@ const CameraComponent = () => {
           localStorage.setItem("photos", JSON.stringify(updatedPhotos));
           localStorage.setItem("nextId", JSON.stringify(nextId + 1));
 
-          // Show notification
-          if (Notification.permission === "granted") {
-            new Notification("Photo Taken", {
-              body: `Photo ID: ${newPhoto.id}`,
-              icon: imageDataURL,
-            });
-          }
+          // Show notification with vibration
+          showNotification("Photo Taken", {
+            body: `Photo ID: ${newPhoto.id}`,
+            icon: imageDataURL,
+          }, [200, 100, 200]);
+
           console.log("Photo captured and saved");
         }
       }

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
+import { showNotification } from '../utils/notifications'; // Import the showNotification function
 
 // Import custom marker icon
 import customMarkerIcon from "../assets/location-pin.png";
@@ -28,6 +29,11 @@ const Geolocalisation = () => {
             setLatitude(position.coords.latitude);
             setLongitude(position.coords.longitude);
             setAccuracy(position.coords.accuracy);
+
+            // Show notification with vibration
+            showNotification("Location Loaded", {
+              body: `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`,
+            }, [200, 100, 200]);
           },
           (error) => {
             console.error("Error getting location:", error);

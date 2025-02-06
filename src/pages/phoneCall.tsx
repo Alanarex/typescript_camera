@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { showNotification } from '../utils/notifications';
 
 const PhoneCall = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -9,6 +10,7 @@ const PhoneCall = () => {
 
   const handleCall = () => {
     if (phoneNumber) {
+      showNotification('Calling', { body: `Calling ${phoneNumber}` }, [200, 100, 200]); // Notification with vibration
       window.location.href = `tel:${phoneNumber}`;
     } else {
       alert('Please enter a valid phone number.');
@@ -17,7 +19,7 @@ const PhoneCall = () => {
 
   return (
     <div>
-      <h1>Say Hi &#128382;</h1>
+      <h1> &#128382;Say Hi</h1>
       <input
         type="tel"
         value={phoneNumber}
