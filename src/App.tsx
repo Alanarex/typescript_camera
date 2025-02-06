@@ -2,6 +2,7 @@ import CameraComponent from './pages/camera';
 import Geolocalisation from './pages/geolocalisation';
 import PhoneCall from './pages/phoneCall';
 import Vibrator from './pages/vibrator';
+import BatteryLevel from './pages/battery';
 import './App.css';
 
 function App() {
@@ -18,6 +19,9 @@ function App() {
       </div>
       <div className="card">
         <Vibrator />
+      </div>
+      <div className="card">
+        <BatteryLevel />
       </div>
     </>
   );
