@@ -1,7 +1,15 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # ✅ Force HTTPS Redirection (should be first)
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+    # ✅ Base directory setup for SPA
     RewriteBase /typescript_camera/
     RewriteRule ^index\.html$ - [L]
+
+    # ✅ If file or directory does not exist, serve index.html (for SPAs)
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule . /typescript_camera/index.html [L]
