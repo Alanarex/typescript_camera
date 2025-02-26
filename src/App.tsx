@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';
 import Login from './pages/Login';
@@ -19,19 +19,29 @@ function App() {
     <>
       <NavBar />
       <Router basename="/typescript_camera">
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/camera" element={<Camera />} />
-          <Route path="/voice-call" element={<VoiceCall />} />
-          <Route path="/video-call" element={<VideoCall />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/messages" element={<Messages />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/" element={<Login />} />
-        </Routes>
-        <Footer />
+        <AppRoutes />
       </Router>
+    </>
+  );
+}
+
+function AppRoutes() {
+  const location = useLocation();
+
+  return (
+    <>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/camera" element={<Camera />} />
+        <Route path="/voice-call" element={<VoiceCall />} />
+        <Route path="/video-call" element={<VideoCall />} />
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/messages" element={<Messages />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/" element={<Login />} />
+      </Routes>
+      {location.pathname !== '/login' && <Footer />}
     </>
   );
 }
