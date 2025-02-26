@@ -1,163 +1,129 @@
-import { useRef, useEffect, useState } from "react";
-import Swal from "sweetalert2";
-import { showNotification } from '../utils/notifications'; // Import the showNotification function
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCamera, faImage } from '@fortawesome/free-solid-svg-icons';
+import '../styles/Camera.css';
 
-// Interface to define the structure of a Photo object
-interface Photo {
-  id: number;
-  dataUrl: string;
-}
+const Camera = () => {
+    const [lastPhoto, setLastPhoto] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [locationData, setLocationData] = useState<any>(null);
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const navigate = useNavigate();
 
-const CameraComponent = () => {
-  const videoPlayerRef = useRef<HTMLVideoElement>(null); // Reference to the video element
-  const [photos, setPhotos] = useState<Photo[]>([]); // State to store the list of photos
-  const [nextId, setNextId] = useState(1); // State to store the next photo ID
-  const [selectedPhoto, setSelectedPhoto] = useState<Photo | null>(null); // State to store the selected photo for the modal
+    useEffect(() => {
+        // Load the last photo from local storage or other storage
+        const photo = localStorage.getItem('lastPhoto');
+        setLastPhoto(photo);
 
-  // Function to initialize the media stream (camera)
-  const initializeMedia = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoPlayerRef.current) {
-        videoPlayerRef.current.srcObject = stream;
-        videoPlayerRef.current.style.display = "block";
-        console.log("Camera initialized");
-      }
-    } catch (error) {
-      console.error("Error accessing camera:", error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Camera Permission Denied',
-        text: 'Please allow camera access to take photos.',
-      });
-    }
-  };
+        // Load location data
+        const loadLocationData = async () => {
+            try {
+                const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true });
+                });
 
-  // Function to capture a photo
-  const handleCapture = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      if (videoPlayerRef.current && stream) {
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
-        if (context) {
-          canvas.width = videoPlayerRef.current.videoWidth;
-          canvas.height = videoPlayerRef.current.videoHeight;
-          context.drawImage(
-            videoPlayerRef.current,
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          );
-          const imageDataURL = canvas.toDataURL("image/png");
-          const newPhoto: Photo = { id: nextId, dataUrl: imageDataURL };
-          const updatedPhotos = [...photos, newPhoto];
-          setPhotos(updatedPhotos);
-          setNextId(nextId + 1);
+                const { latitude, longitude } = position.coords;
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                const data = await response.json();
 
-          // Save photos to localStorage
-          localStorage.setItem("photos", JSON.stringify(updatedPhotos));
-          localStorage.setItem("nextId", JSON.stringify(nextId + 1));
+                setLocationData({
+                    latitude,
+                    longitude,
+                    city: data.address.city || 'Unknown',
+                    country: data.address.country || 'Unknown'
+                });
+            } catch (error) {
+                console.error("Error loading location data: ", error);
+                setLocationData({
+                    latitude: 'Unknown',
+                    longitude: 'Unknown',
+                    city: 'Unknown',
+                    country: 'Unknown'
+                });
+            } finally {
+                // Request camera permission and start the video stream after location data is loaded
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(stream => {
+                        if (videoRef.current) {
+                            videoRef.current.srcObject = stream;
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error accessing camera: ", err);
+                    })
+                    .finally(() => {
+                        setLoading(false);
+                    });
+            }
+        };
 
-          // Show notification with vibration
-          showNotification("Photo Taken", {
-            body: `Photo ID: ${newPhoto.id}`,
-            icon: imageDataURL,
-          }, [200, 100, 200]);
+        loadLocationData();
+    }, []);
 
-          console.log("Photo captured and saved");
+    const handleCapture = () => {
+        if (videoRef.current && locationData) {
+            const canvas = document.createElement('canvas');
+            canvas.width = videoRef.current.videoWidth;
+            canvas.height = videoRef.current.videoHeight;
+            const context = canvas.getContext('2d');
+            if (context) {
+                context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+                const newPhoto = canvas.toDataURL('image/png');
+                const photoId = `photo_${Date.now()}`;
+                const photoDetails = {
+                    id: photoId,
+                    dataUrl: newPhoto,
+                    city: locationData.city,
+                    country: locationData.country,
+                    longitude: locationData.longitude,
+                    latitude: locationData.latitude,
+                    hour: new Date().toLocaleTimeString(),
+                };
+                localStorage.setItem('lastPhoto', newPhoto);
+                localStorage.setItem(photoId, JSON.stringify(photoDetails));
+                const storedPhotos = JSON.parse(localStorage.getItem('photos') || '[]');
+                storedPhotos.push(photoId);
+                localStorage.setItem('photos', JSON.stringify(storedPhotos));
+                setLastPhoto(newPhoto);
+            }
         }
-      }
-    } catch (error) {
-      console.error("Error accessing camera:", error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Camera Permission Denied',
-        text: 'Please allow camera access to take photos.',
-      });
-    }
-  };
-
-  // Function to delete a photo
-  const handleDelete = (id: number) => {
-    const updatedPhotos = photos.filter(photo => photo.id !== id);
-    setPhotos(updatedPhotos);
-    localStorage.setItem("photos", JSON.stringify(updatedPhotos));
-  };
-
-  // Function to clear all photos
-  const handleClearAll = () => {
-    setPhotos([]);
-    localStorage.removeItem("photos");
-    localStorage.removeItem("nextId");
-  };
-
-  // useEffect to initialize the camera and load photos from localStorage
-  useEffect(() => {
-    initializeMedia();
-
-    // Request notification permission
-    if (Notification.permission !== "granted") {
-      Notification.requestPermission();
-    }
-
-    // Load photos from localStorage
-    const savedPhotos = localStorage.getItem("photos");
-    const savedNextId = localStorage.getItem("nextId");
-    if (savedPhotos) {
-      setPhotos(JSON.parse(savedPhotos));
-      console.log("Photos loaded from localStorage");
-    }
-    if (savedNextId) {
-      setNextId(JSON.parse(savedNextId));
-      console.log("Next ID loaded from localStorage");
-    }
-
-    // Cleanup function to stop the camera stream when the component unmounts
-    return () => {
-      if (videoPlayerRef.current) {
-        const stream = videoPlayerRef.current.srcObject as MediaStream;
-        stream?.getVideoTracks().forEach((track) => {
-          track.stop();
-        });
-      }
     };
-  }, []);
 
-  return (
-    <>
-      <h1>Smile &#128515;</h1>
-      <button onClick={handleCapture}>Capture</button>
-      <button onClick={handleClearAll} style={{ marginLeft: '10px' }}>Clear All</button>
-      <video
-        className="!w-full"
-        ref={videoPlayerRef}
-        id="player"
-        autoPlay
-        style={{ display: "block" }}
-      />
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-        {photos.map((photo) => (
-          <div key={photo.id} style={{ textAlign: 'center' }}>
-            <img src={photo.dataUrl} alt={`Captured ${photo.id}`} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
-            <div>
-              <button onClick={() => setSelectedPhoto(photo)}>Open</button>
-              <button onClick={() => handleDelete(photo.id)} style={{ color: 'red', marginLeft: '5px' }}>🗑️</button>
-            </div>
-          </div>
-        ))}
-      </div>
-      {selectedPhoto && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close" onClick={() => setSelectedPhoto(null)}>&times;</span>
-            <img src={selectedPhoto.dataUrl} alt={`Captured ${selectedPhoto.id}`} style={{ width: '100%' }} />
-          </div>
+    const handleGalleryRedirect = () => {
+        // Redirect to the gallery page
+        navigate('/gallery');
+    };
+
+    return (
+        <div className="camera-page">
+            {loading ? (
+                <div className="loader">
+                    <div className="spinner"></div>
+                </div>
+            ) : (
+                <>
+                    <video ref={videoRef} className={`camera-video ${window.innerWidth > 768 ? 'wide' : 'long'}`} autoPlay></video>
+                    <div className="button-container">
+                        <div className="gallery-button-container">
+                          <button className="gallery-button" onClick={handleGalleryRedirect}>
+                              {lastPhoto ? (
+                                  <img src={lastPhoto} alt="Last Photo" />
+                              ) : (
+                                  <FontAwesomeIcon icon={faImage} size="2x" />
+                              )}
+                          </button>
+                        </div>
+                        <div className="capture-button-container">
+                          <button className="capture-button" onClick={handleCapture}>
+                              <FontAwesomeIcon icon={faCamera} size="xl" />
+                          </button>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
-      )}
-    </>
-  );
+    );
 };
 
-export default CameraComponent;
+export default Camera;

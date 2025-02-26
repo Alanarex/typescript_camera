@@ -1,0 +1,46 @@
+.battery-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    /* Smaller font size */
+}
+
+.battery {
+    position: relative;
+    width: 30px;
+    /* Smaller width */
+    height: 12px;
+    /* Smaller height */
+    border: 2px solid;
+    border-radius: 2px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.battery-level {
+    height: 100%;
+    transition: width 0.3s;
+}
+
+.bolt {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    /* White bolt color */
+    font-size: 10px;
+    /* Smaller bolt size */
+}
+
+.battery-tip {
+    width: 3px;
+    height: 6px;
+    background-color: white;
+    position: absolute;
+    right: -3px;
+    top: 50%;
+    transform: translateY(-50%);
+}

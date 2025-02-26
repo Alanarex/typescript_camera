@@ -1,0 +1,81 @@
+.settings {
+    padding: 20px;
+    background-color: rgba(51, 51, 51, 0.8);
+    color: white;
+}
+
+.background-upload {
+    margin-bottom: 20px;
+}
+
+.background-upload label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.background-upload input {
+    display: block;
+}
+
+.preview-image {
+    margin-top: 10px;
+    max-width: 100%;
+    height: auto;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.save-button, .delete-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+}
+
+.save-button {
+    background-color: green;
+    color: white;
+}
+
+.delete-button {
+    background-color: red;
+    color: white;
+    margin-left: 10px;
+}
+
+.app-info, .user-info {
+    margin-top: 20px;
+}
+
+.app-info h2, .user-info h2 {
+    margin-bottom: 10px;
+}
+
+.app-info hr, .user-info hr {
+    border: 0;
+    height: 1px;
+    background: #ccc;
+    margin: 10px 0;
+}
+
+.app-info p, .user-info p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    font-weight: 300;
+}
+
+.app-info a {
+    color: #1e90ff;
+    text-decoration: none;
+}
+
+.app-info a:hover {
+    text-decoration: underline;
+}

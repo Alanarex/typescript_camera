@@ -1,0 +1,72 @@
+.numpad {
+    margin-top: 6em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.numpad .display {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    height: 40px;
+}
+
+.numpad .buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.numpad button {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.numpad .action-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+    position: relative;
+}
+
+.numpad .call-button, .numpad .backspace-button {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: none;
+    border-radius: 50%;
+}
+
+.numpad .call-button {
+    background-color: green;
+    color: white;
+}
+
+.numpad .backspace-button {
+    background-color: transparent;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    position: absolute;
+    left: 70px;
+}
+
+.numpad .backspace-button.visible {
+    opacity: 1;
+}
+
+.numpad .backspace-button.hidden {
+    opacity: 0;
+}

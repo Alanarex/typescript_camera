@@ -1,0 +1,60 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  color: #fff;
+  padding-bottom: 20px;
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.app-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: filter 0.3s;
+}
+
+.app-icon:hover {
+  filter: brightness(1.2);
+}
+
+.app-icon img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+}
+
+.app-icon svg {
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.app-icon span {
+  color: #fff;
+  font-size: 14px;
+}
+
+.logout-button {
+  margin-top: 20px;
+  background-color: #1a1a1a;
+  border: 2px solid #fff;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+  background-color: #444;
+}
