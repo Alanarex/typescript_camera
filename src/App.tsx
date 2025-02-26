@@ -4,7 +4,7 @@ import Footer from './components/Footer';
 import Login from './pages/Login';
 import Home from './pages/Home';
 // Import new pages
-import Camera from './pages/camera';
+import Camera from './pages/Camera';
 import VoiceCall from './pages/VoiceCall';
 import VideoCall from './pages/VideoCall';
 import Gallery from './pages/Gallery';

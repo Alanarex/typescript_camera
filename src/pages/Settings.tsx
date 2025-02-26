@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../styles/Settings.css';
 
 const Settings = () => {
@@ -15,6 +15,7 @@ const Settings = () => {
     }, []);
 
     return (
+        <div className="settings">
             <div className="user-info">
                 <h2>User Information</h2>
                 <hr />
