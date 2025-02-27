@@ -13,15 +13,16 @@ import Settings from './pages/Settings';
 import './styles/index.css'; 
 import './styles/App.css'; 
 import './styles/NavBar.css'; 
+import { LocationProvider } from './context/LocationContext';
 
 function App() {
   return (
-    <>
+    <LocationProvider>
       <NavBar />
       <Router basename="/typescript_camera">
         <AppRoutes />
       </Router>
-    </>
+    </LocationProvider>
   );
 }
 

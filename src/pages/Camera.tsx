@@ -2,63 +2,34 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faImage } from '@fortawesome/free-solid-svg-icons';
+import { useLocation } from '../context/LocationContext';
 import '../styles/Camera.css';
 
 const Camera = () => {
     const [lastPhoto, setLastPhoto] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
-    const [locationData, setLocationData] = useState<any>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
     const navigate = useNavigate();
+    const { locationData } = useLocation();
 
     useEffect(() => {
         // Load the last photo from local storage or other storage
         const photo = localStorage.getItem('lastPhoto');
         setLastPhoto(photo);
 
-        // Load location data
-        const loadLocationData = async () => {
-            try {
-                const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-                    navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true });
-                });
-
-                const { latitude, longitude } = position.coords;
-                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-                const data = await response.json();
-
-                setLocationData({
-                    latitude,
-                    longitude,
-                    city: data.address.city || 'Unknown',
-                    country: data.address.country || 'Unknown'
-                });
-            } catch (error) {
-                console.error("Error loading location data: ", error);
-                setLocationData({
-                    latitude: 'Unknown',
-                    longitude: 'Unknown',
-                    city: 'Unknown',
-                    country: 'Unknown'
-                });
-            } finally {
-                // Request camera permission and start the video stream after location data is loaded
-                navigator.mediaDevices.getUserMedia({ video: true })
-                    .then(stream => {
-                        if (videoRef.current) {
-                            videoRef.current.srcObject = stream;
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Error accessing camera: ", err);
-                    })
-                    .finally(() => {
-                        setLoading(false);
-                    });
-            }
-        };
-
-        loadLocationData();
+        // Request camera permission and start the video stream
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                }
+            })
+            .catch(err => {
+                console.error("Error accessing camera: ", err);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }, []);
 
     const handleCapture = () => {
@@ -106,18 +77,18 @@ const Camera = () => {
                     <video ref={videoRef} className={`camera-video ${window.innerWidth > 768 ? 'wide' : 'long'}`} autoPlay></video>
                     <div className="button-container">
                         <div className="gallery-button-container">
-                          <button className="gallery-button" onClick={handleGalleryRedirect}>
-                              {lastPhoto ? (
-                                  <img src={lastPhoto} alt="Last Photo" />
-                              ) : (
-                                  <FontAwesomeIcon icon={faImage} size="2x" />
-                              )}
-                          </button>
+                            <button className="gallery-button" onClick={handleGalleryRedirect}>
+                                {lastPhoto ? (
+                                    <img src={lastPhoto} alt="Last Photo" />
+                                ) : (
+                                    <FontAwesomeIcon icon={faImage} size="2x" />
+                                )}
+                            </button>
                         </div>
                         <div className="capture-button-container">
-                          <button className="capture-button" onClick={handleCapture}>
-                              <FontAwesomeIcon icon={faCamera} size="xl" />
-                          </button>
+                            <button className="capture-button" onClick={handleCapture}>
+                                <FontAwesomeIcon icon={faCamera} size="xl" />
+                            </button>
                         </div>
                     </div>
                 </>
