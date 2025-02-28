@@ -18,8 +18,8 @@ import { LocationProvider } from './context/LocationContext';
 function App() {
   return (
     <LocationProvider>
-      <NavBar />
       <Router basename="/typescript_camera">
+        <NavBar />
         <AppRoutes />
       </Router>
     </LocationProvider>
