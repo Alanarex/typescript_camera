@@ -16,7 +16,7 @@ const OtpValidation = () => {
         if (/^0[1-9]\d{8}$/.test(phoneNumber)) {
             const generatedOtp = generateOtp();
             setOtp(generatedOtp);
-            setInputOtp(generatedOtp); // Automatically set the input field with the generated OTP
+            setInputOtp(generatedOtp); 
             setOtpSent(true);
             setValidationMessage(`OTP sent to ${phoneNumber} (Simulated: ${generatedOtp})`);
         } else {

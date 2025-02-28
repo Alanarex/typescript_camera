@@ -1,14 +1,27 @@
 import { useNavigate } from 'react-router-dom';
+import { socket } from '../context/socket';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faPhone, faVideo, faImages, faEnvelope, faCog } from '@fortawesome/free-solid-svg-icons';
-import '../styles/Home.css'; 
+import '../styles/Home.css';
 
 const Home = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('userName');
-    localStorage.removeItem('userPhoneNumber');
+    const username = localStorage.getItem('login');
+    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+
+    if (username) {
+      socket.emit('user-offline', username);
+      const updatedUsers = existingUsers.filter((user: string) => user !== username);
+      localStorage.setItem('users', JSON.stringify(updatedUsers));
+    }
+
+    socket.disconnect();
+
+    localStorage.removeItem('login');
+    localStorage.removeItem('phoneNumber');
+
     navigate('/login');
   };
 

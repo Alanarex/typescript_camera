@@ -2,8 +2,10 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 20px;
+    overflow: auto;
+    height: 100%;
 }
 
 .photo-grid {
@@ -19,7 +21,8 @@
     cursor: pointer;
 }
 
-.delete-all-button, .back-to-camera-button {
+.delete-all-button,
+.back-to-camera-button {
     background: white;
     border: none;
     cursor: pointer;

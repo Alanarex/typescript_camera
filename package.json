@@ -1,26 +1,35 @@
 {
   "name": "typescript_camera",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "homepage": "/typescript_camera",
+  "main": "index.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server/index.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "http": "^0.0.1-security",
     "leaflet": "^1.9.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.5.2",
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.29.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "sweetalert2": "^11.15.10",
-    "workbox-window": "^7.3.0"
+    "workbox-window": "^7.3.0",
+    "ws": "^8.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

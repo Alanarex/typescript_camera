@@ -1,0 +1,170 @@
+.messages-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: auto;
+  height: 100%;
+}
+
+.messages-page h1 {
+  text-align: center;
+
+}
+
+.messages-page .content {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.messages-container {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.messages-content {
+  display: flex;
+  width: 100%;
+}
+
+.users-list {
+  width: 200px;
+  border-right: 1px solid #ccc;
+  padding-right: 10px;
+  margin-right: 10px;
+}
+
+.users-list h2 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.users-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.users-list li {
+  margin-bottom: 5px;
+}
+
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 400px;
+  overflow-y: auto;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.message-container {
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  gap: 3px;
+  width: fit-content;
+  max-width: 70%;
+  margin-bottom: 10px;
+}
+
+.other-message-container {
+  align-self: flex-start;
+}
+
+.my-message-container {
+  align-self: flex-end;
+}
+
+.message {
+  width: 100%;
+  font-size: small;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  border-radius: 5px;
+  position: relative;
+}
+
+.my-message {
+  color: black;
+  background-color: #ffffff;
+  border-radius: 5px 5px 10px 5px;
+}
+
+.other-message {
+  color: white;
+  background-color: #007bff;
+  border-radius: 5px 5px 5px 10px;
+}
+
+.message-username {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.message-text {
+  word-wrap: break-word;
+}
+
+.message-input-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.message-input {
+  width: 80%;
+  flex: 1;
+  padding: 10px;
+  border: 0px solid #ccc;
+  border-radius: 20px;
+}
+
+.send-button {
+  margin: 0;
+  height: 100%;
+  padding: 10px;
+  border-left: none;
+  border-radius: 20px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.send-button:hover {
+  background-color: #0056b3;
+}
+
+.profile-picture {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+}
+
+.my-message .profile-picture {
+  right: -50px;
+}
+
+.other-message .profile-picture {
+  left: -50px;
+}
+
+.online-users {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-right: 1px solid #959595;
+}
+
+.online-user {
+  display: flex;
+  gap: 12px;
+  align-self: start;
+  margin-bottom: 15px;
+}

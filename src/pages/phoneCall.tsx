@@ -10,7 +10,7 @@ const PhoneCall = () => {
 
   const handleCall = () => {
     if (phoneNumber) {
-      showNotification('Calling', { body: `Calling ${phoneNumber}` }, [200, 100, 200]); // Notification with vibration
+      showNotification('Calling', { body: `Calling ${phoneNumber}` }, [200, 100, 200]);
       window.location.href = `tel:${phoneNumber}`;
     } else {
       alert('Please enter a valid phone number.');

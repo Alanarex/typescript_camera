@@ -15,7 +15,7 @@ const Vibrator = () => {
     if (isVibrating) {
       navigator.vibrate(0); // Stop vibration
     } else {
-      navigator.vibrate([200, 100, 200]); // Start continuous vibration
+      navigator.vibrate([200, 100, 200]);
     }
     setIsVibrating(!isVibrating);
   };

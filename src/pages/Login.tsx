@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useLocation } from '../context/LocationContext';
+import { socket } from '../context/socket';
 import '../styles/Login.css';
 
 const Login = () => {
@@ -12,11 +13,26 @@ const Login = () => {
   const { setLocationData } = useLocation();
 
   const handleLogin = async () => {
+    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
+    if (existingUsers.includes(username)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Username Taken',
+        text: 'This username is already taken. Please choose another one.',
+      });
+      return;
+    }
+
     if (username && phoneNumber && !isNaN(Number(phoneNumber))) {
       localStorage.setItem('login', username);
       localStorage.setItem('phoneNumber', phoneNumber);
+      existingUsers.push(username);
+      localStorage.setItem('users', JSON.stringify(existingUsers));
 
       setLoading(true);
+
+      socket.connect();
+      socket.emit('user-online', username);
 
       // Fetch location data
       try {
@@ -37,9 +53,11 @@ const Login = () => {
 
         setLocationData(locationData);
         sessionStorage.setItem('locationData', JSON.stringify(locationData));
+        localStorage.setItem('locationData', JSON.stringify(locationData));
+
         console.log("📍 Location stored in session and context:", locationData);
 
-        // Navigate to the home page after successful login
+        // Navigate to home page after login
         navigate('/home');
       } catch (error) {
         console.error("⚠️ Error loading location data:", error);

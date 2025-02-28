@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle, faTrash, faCamera } from '@fortawesome/free-solid-svg-icons';
-import '../styles/Gallery.css'; // Import the CSS file for styling
+import '../styles/Gallery.css';
 
 const Gallery = () => {
     const navigate = useNavigate();
@@ -11,7 +11,6 @@ const Gallery = () => {
     const [showModal, setShowModal] = useState<boolean>(false);
 
     useEffect(() => {
-        // Load photos from local storage or other storage
         const storedPhotos = JSON.parse(localStorage.getItem('photos') || '[]');
         const photoData = storedPhotos.map((photoId: string) => JSON.parse(localStorage.getItem(photoId) || '{}'));
         setPhotos(photoData);

@@ -7,6 +7,16 @@ const Geolocation = () => {
   const [location, setLocation] = useState<string>('Loading...');
 
   useEffect(() => {
+    const storedLocationData = localStorage.getItem('locationData');
+    if (storedLocationData) {
+      const data = JSON.parse(storedLocationData);
+      setLocation(`${data.city}, ${data.country}`);
+    } else {
+      setLocation('Location data not available');
+    }
+  }, []);
+
+  useEffect(() => {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
@@ -16,7 +26,14 @@ const Geolocation = () => {
             throw new Error('Failed to fetch location data');
           }
           const data = await response.json();
-          setLocation(`${data.address.city}, ${data.address.country}`);
+          const locationData = {
+            latitude,
+            longitude,
+            city: data.address.city || 'Unknown',
+            country: data.address.country || 'Unknown'
+          };
+          setLocation(`${locationData.city}, ${locationData.country}`);
+          localStorage.setItem('locationData', JSON.stringify(locationData));
         } catch (error) {
           setLocation('Unable to fetch location');
           console.error(error);

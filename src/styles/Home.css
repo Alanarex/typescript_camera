@@ -5,6 +5,8 @@
   padding: 20px;
   color: #fff;
   padding-bottom: 20px;
+  overflow: auto;
+  height: 100%;
 }
 
 .app-grid {

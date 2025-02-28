@@ -3,15 +3,13 @@
     align-items: center;
     gap: 5px;
     font-size: 10px;
-    /* Smaller font size */
+    overflow: auto;
 }
 
 .battery {
     position: relative;
     width: 30px;
-    /* Smaller width */
     height: 12px;
-    /* Smaller height */
     border: 2px solid;
     border-radius: 2px;
     overflow: hidden;
@@ -30,9 +28,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
     color: white;
-    /* White bolt color */
     font-size: 10px;
-    /* Smaller bolt size */
 }
 
 .battery-tip {

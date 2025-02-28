@@ -1,12 +1,8 @@
-import { useNavigate } from 'react-router-dom';
-
 const VideoCall = () => {
-  const navigate = useNavigate();
 
   return (
     <div>
-      <h1>Video Call</h1>
-      <button onClick={() => navigate('/home')}>Exit</button>
+      <h1>NOT AVAILABLE</h1>
     </div>
   );
 };

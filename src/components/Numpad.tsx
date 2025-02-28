@@ -22,7 +22,7 @@ const Numpad = ({ onCall }: { onCall: (number: string) => void }) => {
         <div className="numpad">
             <div className="display">{number}</div>
             <div className="buttons">
-                {['1','2','3','4','5','6','7','8','9','*','0','#'].map(digit => (
+                {['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#'].map(digit => (
                     <button key={digit} onClick={() => handleButtonClick(digit)}>
                         {digit}
                     </button>
@@ -32,8 +32,8 @@ const Numpad = ({ onCall }: { onCall: (number: string) => void }) => {
                 <button className="call-button" onClick={handleCall}>
                     <FontAwesomeIcon icon={faPhone} />
                 </button>
-                <button 
-                    className={`backspace-button ${number ? 'visible' : 'hidden'}`} 
+                <button
+                    className={`backspace-button ${number ? 'visible' : 'hidden'}`}
                     onClick={handleBackspace}>
                     <FontAwesomeIcon icon={faBackspace} />
                 </button>

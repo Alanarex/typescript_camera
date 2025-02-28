@@ -15,12 +15,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
-  overflow: hidden;
+  overflow: auto;
   background-color: #282c34;
   color: #fff;
   font-family: 'Roboto', sans-serif;
@@ -33,6 +34,7 @@ html, body {
 
 #root {
   margin: auto;
+  height: 100%;
 }
 
 h1 {
@@ -75,4 +77,3 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
-

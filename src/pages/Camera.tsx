@@ -2,19 +2,20 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faImage } from '@fortawesome/free-solid-svg-icons';
-import { useLocation } from '../context/LocationContext';
 import '../styles/Camera.css';
 
 const Camera = () => {
     const [lastPhoto, setLastPhoto] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
-    const [locationReady, setLocationReady] = useState<boolean>(false); // ? Track location readiness
+    const [locationReady, setLocationReady] = useState<boolean>(false);
     const navigate = useNavigate();
-    const { locationData } = useLocation();
+    const [storedLocationData, setStoredLocationData] = useState(() => {
+        const data = localStorage.getItem('locationData');
+        return data ? JSON.parse(data) : null;
+    });
     const videoRef = useRef<HTMLVideoElement | null>(null);
 
     useEffect(() => {
-        // Load last photo from storage
         const photo = localStorage.getItem('lastPhoto');
         setLastPhoto(photo);
     }, []);
@@ -26,8 +27,8 @@ const Camera = () => {
 
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
-                    videoRef.current.style.display = "block"; // Ensure it's visible
-                    setLoading(false); // Hide spinner once video is ready
+                    videoRef.current.style.display = "block";
+                    setLoading(false);
                 } else {
                     throw new Error("? Video element not found.");
                 }
@@ -36,7 +37,6 @@ const Camera = () => {
             }
         };
 
-        // Ensure video element is mounted before trying to initialize the camera
         const checkVideoElement = setInterval(() => {
             if (videoRef.current) {
                 console.log("?? Video element is now available.");
@@ -45,20 +45,26 @@ const Camera = () => {
             } else {
                 console.warn("? Video element not found, retrying...");
             }
-        }, 100); // Retry every 100ms
+        }, 100);
 
-        return () => clearInterval(checkVideoElement); // Cleanup interval on unmount
+        return () => clearInterval(checkVideoElement);
     }, []);
 
     useEffect(() => {
-        // ? Ensure locationData is not null before setting readiness
-        if (locationData && locationData.latitude !== undefined && locationData.longitude !== undefined) {
-            console.log("?? Location data is available.");
+        if (storedLocationData && storedLocationData.latitude !== undefined && storedLocationData.longitude !== undefined) {
+            console.log("?? Stored location data is available.");
             setLocationReady(true);
         } else {
-            console.warn("? Waiting for location data...");
+            console.warn("? Waiting for stored location data...");
         }
-    }, [locationData]);
+    }, [storedLocationData]);
+
+    useEffect(() => {
+        const data = localStorage.getItem('locationData');
+        if (data) {
+            setStoredLocationData(JSON.parse(data));
+        }
+    }, []);
 
     const handleCapture = () => {
         if (!videoRef.current) {
@@ -79,15 +85,14 @@ const Camera = () => {
             context.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
             const newPhoto = canvas.toDataURL('image/png');
             const photoId = `photo_${Date.now()}`;
-            
-            // ? Use optional chaining (`?.`) to avoid TypeScript errors
+
             const photoDetails = {
                 id: photoId,
                 dataUrl: newPhoto,
-                city: locationData?.city || 'Unknown',
-                country: locationData?.country || 'Unknown',
-                longitude: locationData?.longitude || 'Unknown',
-                latitude: locationData?.latitude || 'Unknown',
+                city: storedLocationData?.city || 'Unknown',
+                country: storedLocationData?.country || 'Unknown',
+                longitude: storedLocationData?.longitude || 'Unknown',
+                latitude: storedLocationData?.latitude || 'Unknown',
                 hour: new Date().toLocaleTimeString(),
             };
 

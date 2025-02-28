@@ -10,9 +10,9 @@ import VideoCall from './pages/VideoCall';
 import Gallery from './pages/Gallery';
 import Messages from './pages/Messages';
 import Settings from './pages/Settings';
-import './styles/index.css'; 
-import './styles/App.css'; 
-import './styles/NavBar.css'; 
+import './styles/index.css';
+import './styles/App.css';
+import './styles/NavBar.css';
 import { LocationProvider } from './context/LocationContext';
 
 function App() {

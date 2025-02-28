@@ -18,6 +18,7 @@
 }
 
 .numpad button {
+    margin: 5px;
     width: 60px;
     height: 60px;
     font-size: 1.5rem;
@@ -26,6 +27,7 @@
     align-items: center;
     justify-content: center;
     border-radius: 50%;
+    background-color: #676767;
 }
 
 .numpad .action-buttons {
@@ -37,7 +39,8 @@
     position: relative;
 }
 
-.numpad .call-button, .numpad .backspace-button {
+.numpad .call-button,
+.numpad .backspace-button {
     width: 60px;
     height: 60px;
     font-size: 1.5rem;

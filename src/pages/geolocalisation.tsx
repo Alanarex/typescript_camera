@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import L from "leaflet";
-import "leaflet/dist/leaflet.css"; // Import Leaflet CSS
-import { showNotification } from '../utils/notifications'; // Import the showNotification function
+import "leaflet/dist/leaflet.css";
+import { showNotification } from '../utils/notifications';
 
 // Import custom marker icon
 import customMarkerIcon from "../assets/location-pin.png";
@@ -10,17 +10,16 @@ import customMarkerIcon from "../assets/location-pin.png";
 // Create a custom icon
 const customIcon = L.icon({
   iconUrl: customMarkerIcon,
-  iconSize: [38, 38], // size of the icon
-  iconAnchor: [19, 38], // point of the icon which will correspond to marker's location
-  popupAnchor: [0, -38], // point from which the popup should open relative to the iconAnchor
+  iconSize: [38, 38],
+  iconAnchor: [19, 38],
+  popupAnchor: [0, -38],
 });
 
 const Geolocalisation = () => {
-  const [latitude, setLatitude] = useState<number | null>(null); // State to store the latitude
-  const [longitude, setLongitude] = useState<number | null>(null); // State to store the longitude
-  const [accuracy, setAccuracy] = useState<number | null>(null); // State to store the accuracy
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [accuracy, setAccuracy] = useState<number | null>(null);
 
-  // useEffect to get the user's location when the component mounts
   useEffect(() => {
     const getLocation = () => {
       if (navigator.geolocation) {
@@ -30,7 +29,6 @@ const Geolocalisation = () => {
             setLongitude(position.coords.longitude);
             setAccuracy(position.coords.accuracy);
 
-            // Show notification with vibration
             showNotification("Location Loaded", {
               body: `Latitude: ${position.coords.latitude}, Longitude: ${position.coords.longitude}`,
             }, [200, 100, 200]);
@@ -38,7 +36,7 @@ const Geolocalisation = () => {
           (error) => {
             console.error("Error getting location:", error);
           },
-          { enableHighAccuracy: true } // Request high accuracy
+          { enableHighAccuracy: true }
         );
       } else {
         console.error("Geolocation is not supported by this browser.");
@@ -48,7 +46,6 @@ const Geolocalisation = () => {
     getLocation();
   }, []);
 
-  // Function to generate Google Maps URL
   const generateGoogleMapsUrl = (lat: number, lng: number) => {
     return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
   };
