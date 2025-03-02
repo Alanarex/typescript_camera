@@ -168,3 +168,27 @@
   align-self: start;
   margin-bottom: 15px;
 }
+
+@media (max-width: 768px) {
+  .messages-page .content{
+    width: 100%;
+  }
+
+  .messages-container{
+    width: 100%;
+  }
+
+  .online-users {
+    font-size: small;
+    padding: 7px;
+  }
+
+  .online-users h2 {
+    font-size: medium;
+  }
+
+  .profile-picture {
+    width: 20px;
+    height: 20px;
+  }
+}

@@ -12,9 +12,9 @@ const Footer = () => {
 
     return (
         <footer className="footer">
-            <button className="home-button" onClick={handleHomeRedirect}>
+            <div className="home-button" onClick={handleHomeRedirect}>
                 <FontAwesomeIcon icon={faHome} size="2x" />
-            </button>
+            </div>
         </footer>
     );
 };

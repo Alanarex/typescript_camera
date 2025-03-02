@@ -140,7 +140,7 @@ const Camera = () => {
                 </div>
                 <div className="capture-button-container">
                     <button className="capture-button" onClick={handleCapture} disabled={!locationReady}>
-                        <FontAwesomeIcon icon={faCamera} size="xl" />
+                        <FontAwesomeIcon icon={faCamera} size="xl" className="imgIcon"/>
                     </button>
                 </div>
             </div>
