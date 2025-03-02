@@ -20,12 +20,21 @@ const Messages = () => {
   const [message, setMessage] = useState('');
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const username = localStorage.getItem('login') || 'Anonymous';
-  const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [storedLocationData] = useState(() => {
     const data = localStorage.getItem('locationData');
     return data ? JSON.parse(data) : null;
   });
+  useEffect(() => {
+    // Fetch past messages and online users from the server on mount
+    fetch(`${import.meta.env.VITE_SERVER_URL}${import.meta.env.VITE_API_PREFIX}/messages-list`)
+      .then((res) => res.json())
+      .then((data) => setMessages(data));
+
+    fetch(`${import.meta.env.VITE_SERVER_URL}${import.meta.env.VITE_API_PREFIX}/online-users`)
+      .then((res) => res.json())
+      .then((users) => setOnlineUsers(users));
+  }, []);
 
   useEffect(() => {
     if (!username) {
@@ -37,42 +46,32 @@ const Messages = () => {
       socket.connect();
     }
 
-    fetch('http://localhost:8080/messages')
-      .then((res) => res.json())
-      .then((data) => setMessages(data))
-      .catch((err) => console.error('Error fetching messages:', err));
-
-    // Load existing users from localStorage
-    setOnlineUsers(existingUsers);
-
-    // Handle new messages
-    const handleNewMessage = (newMessage: Message) => {
+    socket.on('message', (newMessage: Message) => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
-    };
+    });
 
-    // Handle user coming online
-    const handleUserOnline = (login: string) => {
-      if (login !== username) {
-        toast(`${login} is now online!`, { position: 'top-right' });
+    socket.on('update-online-users', (users: string[]) => {
+      setOnlineUsers(users);
+    });
+
+    // Listen for user online/offline events
+    socket.on('user-online', (user) => {
+      if (user !== username) {
+        toast(`${user} is now online!`, { position: 'top-right' });
       }
-      setOnlineUsers((prevUsers) => [...new Set([...prevUsers, login])]);
-    };
+    });
 
-    // Handle user going offline
-    const handleUserOffline = (login: string) => {
-      setOnlineUsers((prevUsers) => prevUsers.filter((user) => user !== login));
-    };
-
-    socket.off('message').on('message', handleNewMessage);
-    socket.off('user-online').on('user-online', handleUserOnline);
-    socket.off('user-offline').on('user-offline', handleUserOffline);
+    socket.on('user-offline', (user) => {
+      toast(`${user} has gone offline.`, { position: 'top-right' });
+    });
 
     socket.emit('user-online', username);
 
     return () => {
-      socket.off('message', handleNewMessage);
-      socket.off('user-online', handleUserOnline);
-      socket.off('user-offline', handleUserOffline);
+      socket.off('message');
+      socket.off('update-online-users');
+      socket.off('user-online');
+      socket.off('user-offline');
     };
   }, [username, navigate]);
 
@@ -82,7 +81,7 @@ const Messages = () => {
         username,
         text: message,
         location: storedLocationData ? `${storedLocationData.city}, ${storedLocationData.country}` : 'Unknown location',
-        dateTime: new Date().toLocaleString()
+        dateTime: new Date().toLocaleString(),
       };
       socket.emit('message', newMessage);
       setMessage('');
@@ -108,9 +107,7 @@ const Messages = () => {
                   alt={`${user}'s profile`}
                   className="profile-picture"
                 />
-                <span className="user-username">
-                  {user}
-                </span>
+                <span className="user-username">{user}</span>
               </div>
             ))}
           </div>

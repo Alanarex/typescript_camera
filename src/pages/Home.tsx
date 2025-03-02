@@ -9,14 +9,9 @@ const Home = () => {
 
   const handleLogout = () => {
     const username = localStorage.getItem('login');
-    const existingUsers = JSON.parse(localStorage.getItem('users') || '[]');
-
     if (username) {
       socket.emit('user-offline', username);
-      const updatedUsers = existingUsers.filter((user: string) => user !== username);
-      localStorage.setItem('users', JSON.stringify(updatedUsers));
     }
-
     socket.disconnect();
 
     localStorage.removeItem('login');
