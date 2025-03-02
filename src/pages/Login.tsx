@@ -9,7 +9,7 @@ const Login = () => {
   const [username, setUsername] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
-  const [onlineUsers, setOnlineUsers] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const navigate = useNavigate();
   const { setLocationData } = useLocation();
 
