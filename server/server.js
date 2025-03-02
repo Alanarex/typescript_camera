@@ -57,6 +57,29 @@ app.get([route("/online-users")], (req, res) => {
     res.json([...onlineUsers]);
 });
 
+app.delete(route("/remove-user/:username"), (req, res) => {
+    const username = req.params.username;
+
+    if (onlineUsers.has(username)) {
+        onlineUsers.delete(username);
+        console.log(`${username} was removed from online users.`);
+        io.emit("update-online-users", [...onlineUsers]); // Notify all clients
+
+        return res.json({ success: true, message: `${username} removed successfully.` });
+    }
+
+    res.status(404).json({ success: false, message: `User ${username} not found.` });
+});
+
+app.delete(route("/clear-messages"), (req, res) => {
+    messages = []; // Clear the messages array
+    console.log("All messages have been cleared.");
+    io.emit("messages-cleared"); // Notify all clients
+
+    res.json({ success: true, message: "All messages have been deleted." });
+});
+
+
 io.on('connection', (socket) => {
     console.log('A user connected');
 
